@@ -17,7 +17,7 @@ import tech.deef.twitch.external.TwitchAPIPull;
 import tech.deef.twitch.manipulation.GetFollowed;
 import tech.deef.twitch.manipulation.GetStreams;
 
-@WebServlet("/Twitch/")
+@WebServlet("/Twitch/*")
 public class TwitchServer extends HttpServlet {
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
