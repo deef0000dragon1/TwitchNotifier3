@@ -30,8 +30,7 @@ public class TwitchServer extends HttpServlet {
 			Date date = new Date(System.currentTimeMillis());
 			System.out.print("TwitchServer was called with arguments \"" + request.getPathInfo());
 			System.out.println("\" at [" + date.toString() + "]");
-			
-			
+
 			PrintWriter out = response.getWriter();
 
 			String username = request.getPathInfo().substring(1);
@@ -43,7 +42,7 @@ public class TwitchServer extends HttpServlet {
 				liveNames = pulling.getLiveStreams(GetFollowed.getFollowed(puller.getUserFollowsChannels(username)));
 
 				for (String name : liveNames) {
-					out.println("<h1>" + "Live user: " + name + "</h1>");
+					out.println("<p>" + "Live user: " + name + "</p>");
 				}
 			}
 		} catch (Exception e) {
@@ -52,8 +51,10 @@ public class TwitchServer extends HttpServlet {
 			System.out.println(e.toString());
 			System.out.println();
 			e.printStackTrace(System.out);
-			
-			
+
+			PrintWriter out = response.getWriter();
+			out.println("<p> we apologize, but an error has occured. Please contact the administrator at"
+					+ "deef551@gmail.com for more assistance </p>");
 		}
 	}
 
