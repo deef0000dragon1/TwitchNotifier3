@@ -21,7 +21,6 @@ public class GetStreams {
 			user = puller.getStreamsUser(testUser);
 			if(user != null){if (user.getStream() != null) {
 				liveUsers.add(testUser);
-				System.out.println(testUser);
 			}}else{
 				System.out.println("ERROR: User is null in getLiveStreams. User: " + testUser);
 			}

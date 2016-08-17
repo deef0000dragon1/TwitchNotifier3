@@ -27,9 +27,9 @@ public class TwitchServer extends HttpServlet {
 		response.setContentType("text/html");
 
 		// Actual logic goes here.
+		Date date = new Date(System.currentTimeMillis());
 
 		try {
-			Date date = new Date(System.currentTimeMillis());
 			System.out.print("CALL: TwitchServer was called with arguments \"" + request.getPathInfo());
 			System.out.println("\" at [" + date.toString() + "]");
 
@@ -43,12 +43,14 @@ public class TwitchServer extends HttpServlet {
 				String[] liveNames = null;
 				liveNames = pulling.getLiveStreams(GetFollowed.getFollowed(puller.getUserFollowsChannels(username)));
 
+				System.out.println("INFO: The Number of people live: " + liveNames.length);
 
 				ObjectMapper mapper = new ObjectMapper();
 				out.println(mapper.writeValueAsString(liveNames));
 				//TODO: change the mapper to use a full json format. THis may include making another DOMAIN object
 				
 				//{deef,person,name,geoff,spike}
+				
 			}
 		} catch (Exception e) {
 			System.out.println("an error occured");
@@ -61,6 +63,8 @@ public class TwitchServer extends HttpServlet {
 			out.println("<p> we apologize, but an error has occured. Please contact the administrator at"
 					+ "deef551@gmail.com for more assistance </p>");
 		}
+		System.out.print("INFO: TwitchServer task: called with arguments \"" + request.getPathInfo());
+		System.out.println("\" at [" + date.toString() + "] completed in :" + (System.currentTimeMillis() - date.getTime()) + " ms");
 	}
 
 	public void destroy() {

@@ -28,8 +28,8 @@ public class FancyServer extends HttpServlet {
 
 		// Actual logic goes here.
 
+		Date date = new Date(System.currentTimeMillis());
 		try {
-			Date date = new Date(System.currentTimeMillis());
 			System.out.print("CALL: FacnyServer was called with arguments \"" + request.getPathInfo());
 			System.out.println("\" at [" + date.toString() + "]");
 
@@ -75,6 +75,8 @@ public class FancyServer extends HttpServlet {
 			out.println("<p> we apologize, but an error has occured. Please contact the administrator at"
 					+ "deef551@gmail.com for more assistance </p>");
 		}
+		System.out.print("INFO: FacnyServer task: called with arguments \"" + request.getPathInfo());
+		System.out.println("\" at [" + date.toString() + "] completed in :" + (System.currentTimeMillis() - date.getTime()) + " ms");
 	}
 
 	public void destroy() {
