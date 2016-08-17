@@ -45,8 +45,14 @@ public class TwitchAPIPull implements TwitchAPI {
 
 	private <T> T getPOJO(String link, Class c) {
 
+		
+		
 		String data = puller.PullData(link);
-
+		
+		if(data == null){
+			return null;
+		}
+		
 		ObjectMapper mapper = new ObjectMapper();
 		T obj = null;
 

@@ -13,6 +13,7 @@ public class GetFollowed {
 			//gets the display name from the ith channel and adds it to the array. 
 			names[i] = ufc.getFollows().get(i).getChannel().getDisplayName();
 		}
+		System.out.println("INFO: Number of people followed: " + names.length);
 		return names;
 	}
 }

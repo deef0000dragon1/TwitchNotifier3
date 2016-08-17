@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import tech.deef.twitch.external.DataPull;
 import tech.deef.twitch.external.DataPuller;
 import tech.deef.twitch.external.TwitchAPI;
@@ -28,7 +30,7 @@ public class TwitchServer extends HttpServlet {
 
 		try {
 			Date date = new Date(System.currentTimeMillis());
-			System.out.print("TwitchServer was called with arguments \"" + request.getPathInfo());
+			System.out.print("CALL: TwitchServer was called with arguments \"" + request.getPathInfo());
 			System.out.println("\" at [" + date.toString() + "]");
 
 			PrintWriter out = response.getWriter();
@@ -44,6 +46,8 @@ public class TwitchServer extends HttpServlet {
 				for (String name : liveNames) {
 					out.println("<p>" + "Live user: " + name + "</p>");
 				}
+				
+				//{deef,person,name,geoff,spike}
 			}
 		} catch (Exception e) {
 			System.out.println("an error occured");

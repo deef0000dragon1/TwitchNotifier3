@@ -53,7 +53,8 @@ public class DataPuller implements DataPull{
 		} catch (MalformedURLException mue) {
 			mue.printStackTrace();
 		} catch (IOException ioe) {
-			ioe.printStackTrace();
+			//ioe.printStackTrace();
+			System.out.println("ERROR: IO Exception in Data Puller");
 		} finally {
 			try {
 				if (inputStream != null)
