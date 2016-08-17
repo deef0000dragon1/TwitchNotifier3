@@ -43,9 +43,10 @@ public class TwitchServer extends HttpServlet {
 				String[] liveNames = null;
 				liveNames = pulling.getLiveStreams(GetFollowed.getFollowed(puller.getUserFollowsChannels(username)));
 
-				for (String name : liveNames) {
-					out.println("<p>" + "Live user: " + name + "</p>");
-				}
+
+				ObjectMapper mapper = new ObjectMapper();
+				out.println(mapper.writeValueAsString(liveNames));
+				//TODO: change the mapper to use a full json format. THis may include making another DOMAIN object
 				
 				//{deef,person,name,geoff,spike}
 			}
