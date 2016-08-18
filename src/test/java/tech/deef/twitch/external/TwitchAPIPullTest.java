@@ -115,7 +115,7 @@ public class TwitchAPIPullTest {
 		TwitchAPI puller = new TwitchAPIPull(pull);
 		GetStreams pulling = new GetStreams(puller);
 		String[] liveNames = null;
-		liveNames = pulling.getLiveStreams(GetFollowed.getFollowed(puller.getUserFollowsChannels(username)));
+		liveNames = pulling.getLiveStreamsNames(GetFollowed.getFollowed(puller.getUserFollowsChannels(username)));
 
 		for (String name : liveNames) {
 			System.out.println(name + " is live");
