@@ -10,58 +10,37 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import tech.deef.twitch.external.DataPull;
-import tech.deef.twitch.external.DataPuller;
-import tech.deef.twitch.external.TwitchAPI;
-import tech.deef.twitch.external.TwitchAPIPull;
-import tech.deef.twitch.manipulation.GetFollowed;
-import tech.deef.twitch.manipulation.GetStreams;
+import tech.deef.twitch.manipulation.GetLiveNames;
 
 @WebServlet("/FancyTwitch/*")
 public class FancyServer extends HttpServlet {
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Date date = new Date(System.currentTimeMillis());
+		System.out.print("CALL: " + this.getClass().toString() + " was called with arguments \"" + request.getPathInfo());
+		System.out.println("\" at [" + date.toString() + "]");
 		// Set response content type
 		response.setContentType("text/html");
 
 		// Actual logic goes here.
-
-		Date date = new Date(System.currentTimeMillis());
 		try {
-			System.out.print("CALL: FacnyServer was called with arguments \"" + request.getPathInfo());
-			System.out.println("\" at [" + date.toString() + "]");
-
 			PrintWriter out = response.getWriter();
 
 			String username = request.getPathInfo().substring(1);
 			if (!username.equals("*")) {
-				DataPull pull = new DataPuller();
-				TwitchAPI puller = new TwitchAPIPull(pull);
-				GetStreams pulling = new GetStreams(puller);
-				String[] liveNames = null;
-				liveNames = pulling.getLiveStreams(GetFollowed.getFollowed(puller.getUserFollowsChannels(username)));
+				String[] liveNames = GetLiveNames.getLiveNames(username);
 
-				System.out.println("INFO: The Number of people live: " + liveNames.length);
+				StringBuffer buffer = new StringBuffer();
 
-				
-				out.write("<h3>The following people " + username + " Follows are live</h3>");
-				out.write("<p>");
-				for(String s: liveNames){
-					out.write("<a href=\"https://www.twitch.tv/" + s + "\">" + s + "<br /> </a>");
+				buffer.append("<h3>The following people " + username + " Follows are live</h3>");
+				buffer.append("<p>");
+				for (String s : liveNames) {
+					buffer.append("<a href=\"https://www.twitch.tv/" + s + "\">" + s + "<br /> </a>");
 				}
-				out.write("</p>");
-				
-				
-				//TODO: change the mapper to use a full json format. THis may include making another DOMAIN object
-				
-				//{deef,person,name,geoff,spike}
+				buffer.append("</p>");
+
+				out.write(buffer.toString());
 			}
-			
-			
-			
-			
 			
 			
 		} catch (Exception e) {
@@ -75,8 +54,9 @@ public class FancyServer extends HttpServlet {
 			out.println("<p> we apologize, but an error has occured. Please contact the administrator at"
 					+ "deef551@gmail.com for more assistance </p>");
 		}
-		System.out.print("INFO: FacnyServer task: called with arguments \"" + request.getPathInfo());
-		System.out.println("\" at [" + date.toString() + "] completed in :" + (System.currentTimeMillis() - date.getTime()) + " ms");
+		System.out.print("INFO: " + this.getClass().toString() + " called with arguments \"" + request.getPathInfo());
+		System.out.println("\" at [" + date.toString() + "] completed in :"
+				+ (System.currentTimeMillis() - date.getTime()) + " ms");
 	}
 
 	public void destroy() {
