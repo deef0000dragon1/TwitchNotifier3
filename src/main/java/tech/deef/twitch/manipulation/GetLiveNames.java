@@ -30,4 +30,15 @@ public class GetLiveNames {
 		System.out.println("INFO: The Number of people live: " + liveNames.size());
 		return liveNames;
 	}
+	
+	public static ArrayList<Stream> getLiveStreamsThreaded(String username){
+		DataPull pull = new DataPuller();
+		TwitchAPI puller = new TwitchAPIPull(pull);
+		GetStreams pulling = new GetStreams(puller);
+		ArrayList<Stream> liveNames = new ArrayList<Stream>();
+		liveNames = pulling.getLiveStreamsThreaded(GetFollowed.getFollowed(puller.getUserFollowsChannels(username)));
+		System.out.println("INFO: The Number of people live: " + liveNames.size());
+		return liveNames;
+	}
+	
 }

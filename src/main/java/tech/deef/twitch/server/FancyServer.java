@@ -30,7 +30,7 @@ public class FancyServer extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		ServletWorker.stringOutput(this.getClass(), request, response, (String username, PrintWriter out) -> {
-			List<Stream> liveNames = GetLiveNames.getLiveStreams(username);
+			List<Stream> liveNames = GetLiveNames.getLiveStreamsThreaded(username);
 
 			Collections.sort(liveNames, new Comparator<Stream>() {
 				@Override
@@ -46,6 +46,7 @@ public class FancyServer extends HttpServlet {
 			buffer.append("<p>");
 			for (Stream stream : liveNames) {
 				String time = stream.getCreatedAt();
+				buffer.append("<p>");
 				try {
 					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 					Date now = new Date();
@@ -74,13 +75,14 @@ public class FancyServer extends HttpServlet {
 
 					buffer.append("Viewers: " + stream.getViewers() + "</font>");
 
-					buffer.append("<br /><br />");
+					buffer.append("<br />");
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					System.out.println("ERROR: Time parse failure. Time: " + time);
 					e.printStackTrace();
 					;
 				}
+				buffer.append("</p>");
 			}
 			buffer.append("</p>");
 			buffer.append("<script>setTimeout(function(){"

@@ -1,6 +1,9 @@
 package tech.deef.twitch.manipulation;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import tech.deef.twitch.domain.Stream;
 import tech.deef.twitch.domain.StreamsUser;
@@ -52,6 +55,43 @@ public class GetStreams {
 			}
 		}
 
+		return liveUsers;
+	}
+
+	public ArrayList<Stream> getLiveStreamsThreaded(String[] streams) {
+		ArrayList<Stream> liveUsers = new ArrayList();
+		ExecutorService es = Executors.newCachedThreadPool();
+
+		for (String testUser : streams) {
+			es.execute(new Runnable() {
+				@Override
+				public void run() {
+					StreamsUser user;
+					user = puller.getStreamsUser(testUser);
+					if (user != null) {
+						if (user.getStream() != null) {
+							liveUsers.add(user.getStream());
+						}
+					} else {
+						System.out.println("ERROR: User is null in getLiveStreams. User: " + testUser);
+					}
+				}
+
+			});
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		es.shutdown();
+		try {
+			es.awaitTermination(1, TimeUnit.MINUTES);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return liveUsers;
 	}
 }
