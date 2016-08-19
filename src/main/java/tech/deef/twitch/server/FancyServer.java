@@ -2,9 +2,14 @@ package tech.deef.twitch.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Clock;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -39,9 +44,29 @@ public class FancyServer extends HttpServlet {
 			buffer.append("<p>");
 			for (Stream stream : liveNames) {
 				buffer.append("<a href=\"https://www.twitch.tv/" + stream.getChannel().getDisplayName() + "\">" + stream.getChannel().getDisplayName() + "</a>");
-				buffer.append(" - " + stream.getChannel().getGame() + "<br /> " + stream.getChannel().getStatus() + "<br /><br />");
+				buffer.append(" - " + stream.getChannel().getGame() + "<br /> " + stream.getChannel().getStatus() + "<br />");
+				String time = stream.getCreatedAt();
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+				Date now = new Date();
+				try {
+					Date then = dateFormat.parse(time);
+					Duration liveTime = Duration.ofMillis((now.getTime()-then.getTime())).abs();
+					buffer.append("<font size=\"2\" color=\"red\">Live for: " +""+ liveTime.toDays() + "d " 
+					+ liveTime.toHours()%24 + ":" + liveTime.toMinutes()%60 + ":" + liveTime.getSeconds()%60 + "<br />");
+
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					System.out.println("Time parse failure. Time: " + time);
+					e.printStackTrace();
+				}
+				buffer.append("Viewers: " + stream.getViewers() + "</font>");
+				buffer.append("<br /><br />");
 			}
 			buffer.append("</p>");
+			
+			buffer.append("<script>setTimeout(function(){window.location.reload(true);setTimeout(function(){alert(\"ReloadFailed\");},10000)},(1000*3))</script>");
+			
+			
 			out.write(buffer.toString());
 			
 		});
