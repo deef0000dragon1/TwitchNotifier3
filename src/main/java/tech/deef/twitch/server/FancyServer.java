@@ -26,22 +26,36 @@ public class FancyServer extends HttpServlet {
 
 	private final int RELOAD_TIME = 60000;
 	private final int RELOAD_FAIL_TIMEOUT = 10000;
+	private final int SORT_METHOD = 1;
+	// 0 display name toLowerCase sort
+	// 1 newest stream sort.
 
+	@SuppressWarnings("unused")
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		ServletWorker.stringOutput(this.getClass(), request, response, (String username, PrintWriter out) -> {
 			List<Stream> liveNames = GetLiveNames.getLiveStreamsThreaded(username);
 
-			Collections.sort(liveNames, new Comparator<Stream>() {
-				@Override
-				public int compare(Stream stream2, Stream stream1) {
-					return stream2.getChannel().getDisplayName().toLowerCase()
-							.compareTo(stream1.getChannel().getDisplayName().toLowerCase());
-				}
-			});
+			if (SORT_METHOD == 1) {
+				Collections.sort(liveNames, new Comparator<Stream>() {
+					@Override
+					public int compare(Stream stream2, Stream stream1) {
+						return stream1.getCreatedAt().compareTo(stream2.getCreatedAt());
+					}
+				});
+			} else if (SORT_METHOD == 0) {
+
+				Collections.sort(liveNames, new Comparator<Stream>() {
+					@Override
+					public int compare(Stream stream2, Stream stream1) {
+						return stream2.getChannel().getDisplayName().toLowerCase()
+								.compareTo(stream1.getChannel().getDisplayName().toLowerCase());
+					}
+				});
+			}
 
 			StringBuffer buffer = new StringBuffer();
-
+			boolean newLive = false;
 			buffer.append("<h3>The following people " + username + " Follows are live</h3>");
 			buffer.append("<p>");
 			for (Stream stream : liveNames) {
@@ -55,6 +69,11 @@ public class FancyServer extends HttpServlet {
 					then = dateFormat.parse(time);
 					if (Duration.ofMillis((now.getTime() - then.getTime())).abs().getSeconds() < 3600) {
 						buffer.append("<font size=\"5\" color=\"green\">");
+
+						if (Duration.ofMillis((now.getTime() - then.getTime())).abs().getSeconds() < 120) {
+							newLive = true;
+						}
+
 					}
 
 					buffer.append("<a href=\"https://www.twitch.tv/" + stream.getChannel().getDisplayName() + "\">"
@@ -66,8 +85,7 @@ public class FancyServer extends HttpServlet {
 					if (Duration.ofMillis((now.getTime() - then.getTime())).abs().getSeconds() < 3600) {
 						buffer.append("Live for: " + "" + liveTime.toDays() + "d " + liveTime.toHours() % 24 + ":"
 								+ liveTime.toMinutes() % 60 + ":" + liveTime.getSeconds() % 60 + "<br />");
-					}else
-					{
+					} else {
 						buffer.append("<font size=\"2\" color=\"red\">Live for: " + "" + liveTime.toDays() + "d "
 								+ liveTime.toHours() % 24 + ":" + liveTime.toMinutes() % 60 + ":"
 								+ liveTime.getSeconds() % 60 + "<br />");
@@ -88,6 +106,15 @@ public class FancyServer extends HttpServlet {
 			buffer.append("<script>setTimeout(function(){"
 					+ "window.location.reload(true);setTimeout(function(){alert(\"ReloadFailed\");},"
 					+ RELOAD_FAIL_TIMEOUT + ")},(" + RELOAD_TIME + "))</script>");
+
+			if (newLive) {
+				// sound source
+				// https://www.myinstants.com/media/sounds/steam_notification.mp3
+				buffer.append(
+						"<script>function PlaySound(soundObj) {  var sound = document.getElementById(soundObj);  sound.Play();}"
+								+ "PlaySound(\"sound1\");</script>"
+								+ "<embed src=\"https://www.myinstants.com/media/sounds/steam_notification.mp3\" autostart=\"false\" width=\"0\" height=\"0\" id=\"sound1\"enablejavascript=\"true\">");
+			}
 			out.write(buffer.toString());
 
 		});
